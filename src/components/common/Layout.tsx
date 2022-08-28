@@ -7,9 +7,11 @@ type LayoutProps = {
 }
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <section className="min-h-screen w-full bg-gray-light-1 dark:bg-slate-dark">
+    <section className="flex min-h-screen w-full bg-gray-light-1 dark:bg-slate-3">
       <Header />
-      <main className="container mx-auto pt-16 font-inter">{children}</main>
+      <main className="container mx-auto flex flex-col pt-16 font-inter text-gray-dark-1 dark:text-gray-light-2 ">
+        {children}
+      </main>
     </section>
   )
 }
