@@ -6,10 +6,11 @@ type AppModalProps = {
   value: boolean
   setFalse: () => void
   children: ReactNode
+  fn?: () => void
 }
-const AppModal = ({ value, setFalse, children }: AppModalProps) => {
+const AppModal = ({ value, setFalse, children, fn }: AppModalProps) => {
   return (
-    <Transition appear show={value} as={Fragment}>
+    <Transition appear show={value} as={Fragment} afterLeave={fn}>
       <Dialog as="div" className="relative z-10" onClose={setFalse}>
         <Transition.Child
           as={Fragment}

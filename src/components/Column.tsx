@@ -1,3 +1,5 @@
+import { useRef } from 'react'
+
 import useBoolean from '@/hooks/useBoolean'
 import { useAppDispatch } from '@/store/reduxHooks'
 import type { Task } from '@/types/types'
@@ -18,7 +20,18 @@ type ColumnProps = {
 
 const Column = ({ title, tasks, index, id }: ColumnProps) => {
   const [value, { setFalse, setTrue }] = useBoolean(false)
+  const ref = useRef<HTMLDivElement | null>(null)
   const dispatch = useAppDispatch()
+
+  const afterLeave = () => {
+    if (ref.current) {
+      ref.current.scrollTo({
+        behavior: 'smooth',
+        top: ref.current.scrollHeight,
+        left: 0,
+      })
+    }
+  }
   const submit = (text: string) => {
     dispatch(
       createNewTask({
@@ -58,7 +71,10 @@ const Column = ({ title, tasks, index, id }: ColumnProps) => {
             <p className="sr-only">Edit Column title</p>
           </button>
         </div>
-        <div className="h-auto max-w-fit space-y-3 overflow-y-auto overflow-x-hidden pb-3">
+        <div
+          ref={ref}
+          className="h-[380px] max-w-fit space-y-3 overflow-y-auto overflow-x-hidden pb-3"
+        >
           {tasks.length > 0 &&
             tasks.map((t) => (
               <Card stacks={t.stacks} key={t.id} id={t.id} title={t.title} />
@@ -70,7 +86,7 @@ const Column = ({ title, tasks, index, id }: ColumnProps) => {
         </div>
         {index === 0 && <Button click={setTrue} text="Create new task" />}
       </article>
-      <AppModal value={value} setFalse={setFalse}>
+      <AppModal value={value} setFalse={setFalse} fn={afterLeave}>
         <Heading3 text="Create new task" />
         <Form
           submit={submit}
