@@ -7,10 +7,10 @@ export type Task = {
   title: string
   description: string
   date: Date
-  stacks: Stack[] | undefined | []
+  stacks: Stack[]
 }
 export type Board = {
   id: string
   title: string
-  tasks: Task[] | []
+  tasks: Task[]
 }
