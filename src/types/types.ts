@@ -6,7 +6,7 @@ export type Task = {
   id: string
   title: string
   description: string
-  date: Date
+  date: string
   stacks: Stack[]
 }
 export type Board = {

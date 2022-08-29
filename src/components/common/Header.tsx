@@ -4,7 +4,7 @@ import ToggleThemeBtn from './ToggleThemeBtn'
 
 const Header = () => {
   return (
-    <nav className="fixed inset-0 flex h-16 items-center bg-primary font-inter text-gray-dark-1 dark:bg-primary-dark dark:text-gray-light-2">
+    <nav className="flex h-16 w-full items-center bg-primary font-inter text-gray-dark-1 dark:bg-primary-dark dark:text-gray-light-2">
       <div className="container mx-auto flex justify-between">
         <Link href="/">
           <a className="flex space-x-2 rounded py-1 px-2 ring-secondary transition-colors hover:text-gray-light-1 focus:outline-none focus-visible:ring-2">

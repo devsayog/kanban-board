@@ -6,7 +6,7 @@ import { Paragraph } from './Typography'
 
 type FormProps = {
   btnText: string
-  submit: (text: String) => void
+  submit: (text: string) => void
   placeholder: string
 }
 

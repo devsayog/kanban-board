@@ -1,6 +1,8 @@
 import useBoolean from '@/hooks/useBoolean'
+import { useAppDispatch } from '@/store/reduxHooks'
 import type { Task } from '@/types/types'
 
+import { createNewTask } from './Board/boardSlice'
 import Card from './Card'
 import AppModal from './common/AppModal'
 import Button from './common/Button'
@@ -14,12 +16,22 @@ type ColumnProps = {
   tasks: Task[] | []
 }
 
-const Column = ({ title, tasks, index }: ColumnProps) => {
-  const [value, { toggle, setFalse, setTrue }] = useBoolean(false)
+const Column = ({ title, tasks, index, id }: ColumnProps) => {
+  const [value, { setFalse, setTrue }] = useBoolean(false)
+  const dispatch = useAppDispatch()
+  const submit = (text: string) => {
+    dispatch(
+      createNewTask({
+        boardId: id,
+        text,
+      }),
+    )
+    setFalse()
+  }
+
   return (
     <>
       <article className="flex h-[500px]  min-w-fit flex-col space-y-3 overflow-y-hidden rounded bg-white p-2 shadow dark:bg-slate-2">
-        <button onClick={toggle}>Toggle {value ? 'open' : 'false'}</button>
         <div className="group flex items-center justify-between">
           <Heading2 text={title} />
           <button
@@ -61,7 +73,7 @@ const Column = ({ title, tasks, index }: ColumnProps) => {
       <AppModal value={value} setFalse={setFalse}>
         <Heading3 text="Create new task" />
         <Form
-          submit={console.log}
+          submit={submit}
           btnText="add new task"
           placeholder="your new task ..."
         />

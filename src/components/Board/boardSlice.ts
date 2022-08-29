@@ -24,16 +24,23 @@ export const boardSlice = createSlice({
     createNewTask: (state, action: PayloadAction<CreateNewTask>) => {
       const { boardId, text } = action.payload
       const targetBoardIndex = findItemByIndexId(state.boards, boardId)
-      state.boards[targetBoardIndex]!.tasks.push({
+      state.boards[targetBoardIndex]?.tasks.push({
         id: nanoid(),
         title: text,
         description: '',
-        date: new Date(),
+        date: new Date().toLocaleDateString(),
         stacks: [],
+      })
+    },
+    createNewBoard: (state, action: PayloadAction<string>) => {
+      state.boards.push({
+        id: nanoid(),
+        title: action.payload,
+        tasks: [],
       })
     },
   },
 })
 export const selectBoards = (state: RootState) => state.board
-export const { createNewTask } = boardSlice.actions
+export const { createNewTask, createNewBoard } = boardSlice.actions
 export default boardSlice.reducer
