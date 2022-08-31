@@ -8,7 +8,12 @@ import { useAppDispatch, useAppSelector } from '@/store/reduxHooks'
 import type { Task } from '@/types/types'
 import { throttle } from '@/utils/throttle'
 
-import { moveTask, selectBoards, setDraggedItem } from './Board/boardSlice'
+import {
+  deleteTask,
+  moveTask,
+  selectBoards,
+  setDraggedItem,
+} from './Board/boardSlice'
 import CardInfo from './CardInfo'
 import AppModal from './common/AppModal'
 import Chips from './common/Chips'
@@ -73,6 +78,15 @@ const Card = ({ isPreview, columnId, task }: CardProps) => {
         draggedItem.type === 'CARD' &&
         draggedItem.id === id,
     )
+  }
+  const deleteCard = () => {
+    dispatch(
+      deleteTask({
+        id,
+        columnId,
+      }),
+    )
+    setDeleteFalse()
   }
   return (
     <>
@@ -169,10 +183,10 @@ const Card = ({ isPreview, columnId, task }: CardProps) => {
       </AppModal>
       <AppModal setFalse={setDeleteFalse} value={isDelete}>
         <DeleteInfo
-          close={setDeleteFalse}
           title={title}
-          id={id}
-          columnId={columnId}
+          task
+          deleteFn={deleteCard}
+          close={setDeleteFalse}
         />
       </AppModal>
     </>
