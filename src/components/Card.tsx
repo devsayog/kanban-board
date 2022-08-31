@@ -1,16 +1,96 @@
-import type { Stack } from '@/types/types'
+import { useRef } from 'react'
+import { useDrop } from 'react-dnd'
 
+// import { useDrop } from 'react-dnd'
+import useDragItem from '@/hooks/useDragItem'
+import { useAppDispatch, useAppSelector } from '@/store/reduxHooks'
+import type { Stack } from '@/types/types'
+import { throttle } from '@/utils/throttle'
+
+import { moveTask, selectBoards, setDraggedItem } from './Board/boardSlice'
 import Chips from './common/Chips'
 import { Paragraph } from './common/Typography'
 
 type CardProps = {
   title: string
   id: string
+  date: string
+  columnId: string
+  description: string
   stacks: Stack[] | undefined | []
+  isPreview?: boolean
 }
-const Card = ({ title, stacks }: CardProps) => {
+const Card = ({
+  isPreview,
+  title,
+  stacks,
+  id,
+  date,
+  columnId,
+  description,
+}: CardProps) => {
+  const { draggedItem } = useAppSelector(selectBoards)
+  const ref = useRef<HTMLElement>(null)
+  const dispatch = useAppDispatch()
+  const { drag } = useDragItem({
+    type: 'CARD',
+    id,
+    title,
+    date,
+    columnId,
+    stacks: stacks || [],
+    description,
+  })
+
+  const [, drop] = useDrop(
+    () => ({
+      accept: 'CARD',
+      hover: throttle(() => {
+        if (!ref.current) {
+          return null
+        }
+        if (!draggedItem) {
+          return null
+        }
+        if (draggedItem.type !== 'CARD') {
+          return null
+        }
+        if (draggedItem.id === id) {
+          return null
+        }
+        dispatch(
+          moveTask({
+            draggedItemId: draggedItem.id,
+            hoveredItemId: id,
+            currentColId: draggedItem.columnId,
+            targetColId: columnId,
+          }),
+        )
+        return dispatch(setDraggedItem({ ...draggedItem, columnId }))
+      }, 200),
+    }),
+    [draggedItem],
+  )
+  drag(drop(ref))
+  const hidden = () => {
+    return Boolean(
+      !isPreview &&
+        draggedItem &&
+        draggedItem.type === 'CARD' &&
+        draggedItem.id === id,
+    )
+  }
   return (
-    <article className="mr-2 w-[304px] space-y-2 rounded bg-gray-light-2 p-2 shadow dark:bg-slate-3 ">
+    <article
+      ref={ref}
+      className={`mr-2 w-[304px] space-y-2 rounded bg-gray-light-2 p-2 shadow dark:bg-slate-3 ${
+        hidden() ? 'opacity-0' : 'opacity-100'
+      }
+      `}
+      // style={{
+      //   opacity: hidden() ? 0 : 1,
+      // }}
+    >
       <div className="flex flex-wrap">
         {stacks &&
           stacks.length > 0 &&

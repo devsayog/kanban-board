@@ -1,4 +1,4 @@
-export const findItemByIndexId = <T extends { id: string }>(
+export const findItemIndexById = <T extends { id: string }>(
   items: T[],
   id: string,
 ) => items.findIndex((i) => i.id === id)

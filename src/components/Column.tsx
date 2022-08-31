@@ -1,10 +1,18 @@
 import { useRef } from 'react'
+import { useDrop } from 'react-dnd'
 
 import useBoolean from '@/hooks/useBoolean'
-import { useAppDispatch } from '@/store/reduxHooks'
+import { useAppDispatch, useAppSelector } from '@/store/reduxHooks'
 import type { Task } from '@/types/types'
+import { mergeRefs } from '@/utils/mergeRefs'
+import { throttle } from '@/utils/throttle'
 
-import { createNewTask } from './Board/boardSlice'
+import {
+  createNewTask,
+  moveTask,
+  selectBoards,
+  setDraggedItem,
+} from './Board/boardSlice'
 import Card from './Card'
 import AppModal from './common/AppModal'
 import Button from './common/Button'
@@ -21,7 +29,40 @@ type ColumnProps = {
 const Column = ({ title, tasks, index, id }: ColumnProps) => {
   const [value, { setFalse, setTrue }] = useBoolean(false)
   const ref = useRef<HTMLDivElement | null>(null)
+  const dropRef = useRef<HTMLDivElement | null>(null)
   const dispatch = useAppDispatch()
+  const { draggedItem } = useAppSelector(selectBoards)
+
+  const [, drop] = useDrop({
+    accept: 'CARD',
+    hover: throttle(() => {
+      if (!draggedItem) {
+        return null
+      }
+      if (!dropRef) {
+        return null
+      }
+      if (draggedItem.type === 'CARD') {
+        if (draggedItem.columnId === id) {
+          return null
+        }
+        if (tasks.length) {
+          return null
+        }
+        dispatch(
+          moveTask({
+            draggedItemId: draggedItem.id,
+            hoveredItemId: null,
+            currentColId: draggedItem.columnId,
+            targetColId: id,
+          }),
+        )
+        dispatch(setDraggedItem({ ...draggedItem, columnId: id }))
+      }
+      return null
+    }, 200),
+  })
+  drop(dropRef)
 
   const afterLeave = () => {
     if (ref.current) {
@@ -44,7 +85,7 @@ const Column = ({ title, tasks, index, id }: ColumnProps) => {
 
   return (
     <>
-      <article className="flex h-[500px]  min-w-fit flex-col space-y-3 overflow-y-hidden rounded bg-white p-2 shadow dark:bg-slate-2">
+      <article className="flex max-h-[500px] min-w-fit  flex-col space-y-3 self-start overflow-y-hidden rounded bg-white p-2 shadow dark:bg-slate-2">
         <div className="group flex items-center justify-between">
           <Heading2 text={title} />
           <button
@@ -72,12 +113,20 @@ const Column = ({ title, tasks, index, id }: ColumnProps) => {
           </button>
         </div>
         <div
-          ref={ref}
-          className="h-[380px] max-w-fit space-y-3 overflow-y-auto overflow-x-hidden pb-3"
+          ref={mergeRefs(ref, dropRef)}
+          className="max-h-[480px] max-w-fit space-y-3 self-start overflow-y-auto overflow-x-hidden pb-3"
         >
           {tasks.length > 0 &&
             tasks.map((t) => (
-              <Card stacks={t.stacks} key={t.id} id={t.id} title={t.title} />
+              <Card
+                stacks={t.stacks}
+                key={t.id}
+                id={t.id}
+                title={t.title}
+                columnId={id}
+                date={t.date}
+                description={t.description}
+              />
             ))}
           {/*  maintain width of column */}
           {tasks.length === 0 && (

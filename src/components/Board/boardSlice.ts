@@ -1,20 +1,23 @@
+/* eslint-disable no-param-reassign */
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 import { nanoid } from 'nanoid'
 
 import { board } from '@/data'
 import type { RootState } from '@/store/strore'
-import type { Board } from '@/types/types'
-import { findItemByIndexId } from '@/utils/array'
+import type { Board, Task } from '@/types/types'
+import { findItemIndexById } from '@/utils/array'
 
-import type { CreateNewTask } from './types'
+import type { CardDragItem, CreateNewTask, MoveTask } from './types'
 
 export type BoardState = {
   boards: Board[]
+  draggedItem: CardDragItem | null
 }
 
 const initialState: BoardState = {
   boards: board,
+  draggedItem: null,
 }
 
 export const boardSlice = createSlice({
@@ -23,7 +26,7 @@ export const boardSlice = createSlice({
   reducers: {
     createNewTask: (state, action: PayloadAction<CreateNewTask>) => {
       const { boardId, text } = action.payload
-      const targetBoardIndex = findItemByIndexId(state.boards, boardId)
+      const targetBoardIndex = findItemIndexById(state.boards, boardId)
       state.boards[targetBoardIndex]?.tasks.push({
         id: nanoid(),
         title: text,
@@ -39,8 +42,38 @@ export const boardSlice = createSlice({
         tasks: [],
       })
     },
+    setDraggedItem: (state, action: PayloadAction<CardDragItem | null>) => {
+      state.draggedItem = action.payload
+    },
+    moveTask: (state, action: PayloadAction<MoveTask>) => {
+      const { draggedItemId, hoveredItemId, currentColId, targetColId } =
+        action.payload
+
+      const currentBoardIndex = findItemIndexById(state.boards, currentColId)
+      const targetBoardIndex = findItemIndexById(state.boards, targetColId)
+
+      const dragIndex = findItemIndexById(
+        state.boards[currentBoardIndex]!.tasks,
+        draggedItemId,
+      )
+
+      const hoverIndex = hoveredItemId
+        ? findItemIndexById(
+            state.boards[targetBoardIndex]!.tasks,
+            hoveredItemId,
+          )
+        : 0
+      const item = state.boards[currentBoardIndex]!.tasks[dragIndex] as Task
+
+      // Remove the task from the current list
+      state.boards[currentBoardIndex]!.tasks.splice(dragIndex, 1)
+
+      // Add the task to the target list
+      state.boards[targetBoardIndex]!.tasks.splice(hoverIndex, 0, item)
+    },
   },
 })
 export const selectBoards = (state: RootState) => state.board
-export const { createNewTask, createNewBoard } = boardSlice.actions
+export const { createNewTask, createNewBoard, setDraggedItem, moveTask } =
+  boardSlice.actions
 export default boardSlice.reducer
