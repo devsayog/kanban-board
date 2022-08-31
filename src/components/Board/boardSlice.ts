@@ -13,6 +13,7 @@ import type {
   CreateNewTask,
   DeleteTask,
   MoveTask,
+  UpdateBoardTitle,
   UpdateTask,
 } from './types'
 
@@ -97,6 +98,11 @@ export const boardSlice = createSlice({
       const currBoard = state.boards[currBordIndex]
       currBoard!.tasks = currBoard!.tasks.filter((t) => t.id !== id)
     },
+    updateBoardTitle: (state, action: PayloadAction<UpdateBoardTitle>) => {
+      const { id, text } = action.payload
+      const currBoardIndex = findItemIndexById(state.boards, id)
+      state.boards[currBoardIndex]!.title = text
+    },
   },
 })
 export const selectBoards = (state: RootState) => state.board
@@ -107,5 +113,6 @@ export const {
   moveTask,
   updateTask,
   deleteTask,
+  updateBoardTitle,
 } = boardSlice.actions
 export default boardSlice.reducer

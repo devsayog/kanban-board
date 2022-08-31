@@ -22,3 +22,7 @@ export type DeleteTask = {
   id: string
   columnId: string
 }
+export type UpdateBoardTitle = {
+  id: string
+  text: string
+}

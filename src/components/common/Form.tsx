@@ -1,5 +1,5 @@
 import type { FormEvent } from 'react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import Button from './Button'
 import { Paragraph } from './Typography'
@@ -8,11 +8,25 @@ type FormProps = {
   btnText: string
   submit: (text: string) => void
   placeholder: string
+  title?: string
+  icon?: boolean
 }
 
-const Form = ({ btnText, submit, placeholder }: FormProps) => {
+const Form = ({
+  btnText,
+  submit,
+  placeholder,
+  title,
+  icon = true,
+}: FormProps) => {
   const ref = useRef<HTMLInputElement>(null)
   const [error, setError] = useState('')
+  useEffect(() => {
+    if (!ref.current) {
+      return
+    }
+    ref.current.value = title || ''
+  }, [title])
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setError('')
@@ -41,7 +55,7 @@ const Form = ({ btnText, submit, placeholder }: FormProps) => {
           className="text-secondary-dark dark:text-secondary"
         />
       )}
-      <Button click={() => {}} text={btnText} />
+      <Button icon={icon} click={() => {}} text={btnText} />
     </form>
   )
 }

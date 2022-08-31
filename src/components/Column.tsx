@@ -12,6 +12,7 @@ import {
   moveTask,
   selectBoards,
   setDraggedItem,
+  updateBoardTitle,
 } from './Board/boardSlice'
 import Card from './Card'
 import AppModal from './common/AppModal'
@@ -28,6 +29,8 @@ type ColumnProps = {
 
 const Column = ({ title, tasks, index, id }: ColumnProps) => {
   const [value, { setFalse, setTrue }] = useBoolean(false)
+  const [edit, { setFalse: setEditFalse, setTrue: setEditTrue }] =
+    useBoolean(false)
   const ref = useRef<HTMLDivElement | null>(null)
   const dropRef = useRef<HTMLDivElement | null>(null)
   const dispatch = useAppDispatch()
@@ -82,6 +85,15 @@ const Column = ({ title, tasks, index, id }: ColumnProps) => {
     )
     setFalse()
   }
+  const updateTitle = (text: string) => {
+    dispatch(
+      updateBoardTitle({
+        id,
+        text,
+      }),
+    )
+    setEditFalse()
+  }
 
   return (
     <>
@@ -89,6 +101,7 @@ const Column = ({ title, tasks, index, id }: ColumnProps) => {
         <div className="group flex items-center justify-between">
           <Heading2 text={title} />
           <button
+            onClick={setEditTrue}
             type="button"
             className="rounded-full bg-primary-dark
           p-1.5 text-gray-light-1 ring-secondary-dark ring-offset-1 transition-transform
@@ -131,6 +144,16 @@ const Column = ({ title, tasks, index, id }: ColumnProps) => {
           submit={submit}
           btnText="add new task"
           placeholder="your new task ..."
+        />
+      </AppModal>
+      <AppModal value={edit} setFalse={setEditFalse}>
+        <Heading3 text="Edit board title" />
+        <Form
+          icon={false}
+          submit={updateTitle}
+          title={title}
+          btnText="Update title"
+          placeholder="board title ..."
         />
       </AppModal>
     </>
