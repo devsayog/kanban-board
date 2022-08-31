@@ -117,17 +117,7 @@ const Column = ({ title, tasks, index, id }: ColumnProps) => {
           className="max-h-[480px] max-w-fit space-y-3 self-start overflow-y-auto overflow-x-hidden pb-3"
         >
           {tasks.length > 0 &&
-            tasks.map((t) => (
-              <Card
-                stacks={t.stacks}
-                key={t.id}
-                id={t.id}
-                title={t.title}
-                columnId={id}
-                date={t.date}
-                description={t.description}
-              />
-            ))}
+            tasks.map((t) => <Card key={t.id} columnId={id} task={t} />)}
           {/*  maintain width of column */}
           {tasks.length === 0 && (
             <div className="not-sr-only mr-2 w-[304px] bg-gray-light-2 p-0 opacity-0 shadow dark:bg-slate-3" />

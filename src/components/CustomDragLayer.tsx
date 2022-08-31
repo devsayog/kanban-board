@@ -16,18 +16,20 @@ const CustomDragLayer = () => {
         style={{
           transform: `translate(${currentOffset.x}px,${currentOffset.y}px)`,
           rotate: '2deg',
-          // scale: '1.1',
+          scale: '1.1',
         }}
       >
         {draggedItem.type === 'CARD' && (
           <Card
-            stacks={draggedItem.stacks}
+            task={{
+              id: draggedItem.id,
+              title: draggedItem.title,
+              stacks: draggedItem.stacks,
+              date: draggedItem.date,
+              description: draggedItem.description,
+            }}
             key={draggedItem.id}
-            id={draggedItem.id}
-            title={draggedItem.title}
             columnId={draggedItem.columnId}
-            date={draggedItem.date}
-            description={draggedItem.description}
             isPreview
           />
         )}

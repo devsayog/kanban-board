@@ -4,7 +4,7 @@ import { useDrop } from 'react-dnd'
 // import { useDrop } from 'react-dnd'
 import useDragItem from '@/hooks/useDragItem'
 import { useAppDispatch, useAppSelector } from '@/store/reduxHooks'
-import type { Stack } from '@/types/types'
+import type { Task } from '@/types/types'
 import { throttle } from '@/utils/throttle'
 
 import { moveTask, selectBoards, setDraggedItem } from './Board/boardSlice'
@@ -12,23 +12,13 @@ import Chips from './common/Chips'
 import { Paragraph } from './common/Typography'
 
 type CardProps = {
-  title: string
-  id: string
-  date: string
+  task: Task
   columnId: string
-  description: string
-  stacks: Stack[] | undefined | []
   isPreview?: boolean
 }
-const Card = ({
-  isPreview,
-  title,
-  stacks,
-  id,
-  date,
-  columnId,
-  description,
-}: CardProps) => {
+const Card = ({ isPreview, columnId, task }: CardProps) => {
+  const { date, description, id, title, stacks } = task
+
   const { draggedItem } = useAppSelector(selectBoards)
   const ref = useRef<HTMLElement>(null)
   const dispatch = useAppDispatch()
@@ -42,35 +32,33 @@ const Card = ({
     description,
   })
 
-  const [, drop] = useDrop(
-    () => ({
-      accept: 'CARD',
-      hover: throttle(() => {
-        if (!ref.current) {
-          return null
-        }
-        if (!draggedItem) {
-          return null
-        }
-        if (draggedItem.type !== 'CARD') {
-          return null
-        }
-        if (draggedItem.id === id) {
-          return null
-        }
-        dispatch(
-          moveTask({
-            draggedItemId: draggedItem.id,
-            hoveredItemId: id,
-            currentColId: draggedItem.columnId,
-            targetColId: columnId,
-          }),
-        )
-        return dispatch(setDraggedItem({ ...draggedItem, columnId }))
-      }, 200),
-    }),
-    [draggedItem],
-  )
+  const [, drop] = useDrop({
+    accept: 'CARD',
+    hover: throttle(() => {
+      if (!ref.current) {
+        return null
+      }
+      if (!draggedItem) {
+        return null
+      }
+      if (draggedItem.type !== 'CARD') {
+        return null
+      }
+      if (draggedItem.id === id) {
+        return null
+      }
+      dispatch(
+        moveTask({
+          draggedItemId: draggedItem.id,
+          hoveredItemId: id,
+          currentColId: draggedItem.columnId,
+          targetColId: columnId,
+        }),
+      )
+      dispatch(setDraggedItem({ ...draggedItem, columnId }))
+      return null
+    }, 100),
+  })
   drag(drop(ref))
   const hidden = () => {
     return Boolean(
@@ -87,9 +75,6 @@ const Card = ({
         hidden() ? 'opacity-0' : 'opacity-100'
       }
       `}
-      // style={{
-      //   opacity: hidden() ? 0 : 1,
-      // }}
     >
       <div className="flex flex-wrap">
         {stacks &&
