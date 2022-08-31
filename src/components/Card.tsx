@@ -12,6 +12,7 @@ import { moveTask, selectBoards, setDraggedItem } from './Board/boardSlice'
 import CardInfo from './CardInfo'
 import AppModal from './common/AppModal'
 import Chips from './common/Chips'
+import DeleteInfo from './common/DeleteInfo'
 import { Paragraph } from './common/Typography'
 
 type CardProps = {
@@ -22,6 +23,8 @@ type CardProps = {
 const Card = ({ isPreview, columnId, task }: CardProps) => {
   const { date, description, id, title, stacks } = task
   const [value, { setTrue, setFalse }] = useBoolean(false)
+  const [isDelete, { setTrue: setDeleteTrue, setFalse: setDeleteFalse }] =
+    useBoolean(false)
   const { draggedItem } = useAppSelector(selectBoards)
   const ref = useRef<HTMLElement>(null)
   const dispatch = useAppDispatch()
@@ -112,6 +115,7 @@ const Card = ({ isPreview, columnId, task }: CardProps) => {
           </div>
           <div className="flex space-x-1">
             <button
+              onClick={setDeleteTrue}
               type="button"
               className="rounded-full bg-secondary p-1.5 text-gray-light-1 ring-primary-dark ring-offset-1
             transition-transform hover:scale-105
@@ -162,6 +166,14 @@ const Card = ({ isPreview, columnId, task }: CardProps) => {
       </article>
       <AppModal setFalse={setFalse} value={value}>
         <CardInfo task={task} columnId={columnId} close={setFalse} />
+      </AppModal>
+      <AppModal setFalse={setDeleteFalse} value={isDelete}>
+        <DeleteInfo
+          close={setDeleteFalse}
+          title={title}
+          id={id}
+          columnId={columnId}
+        />
       </AppModal>
     </>
   )

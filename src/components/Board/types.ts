@@ -18,3 +18,7 @@ export type MoveTask = {
 export interface UpdateTask extends Task {
   columnId: string
 }
+export type DeleteTask = {
+  id: string
+  columnId: string
+}

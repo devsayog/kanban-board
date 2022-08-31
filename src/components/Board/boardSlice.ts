@@ -8,7 +8,13 @@ import type { RootState } from '@/store/strore'
 import type { Board, Task } from '@/types/types'
 import { findItemIndexById } from '@/utils/array'
 
-import type { CardDragItem, CreateNewTask, MoveTask, UpdateTask } from './types'
+import type {
+  CardDragItem,
+  CreateNewTask,
+  DeleteTask,
+  MoveTask,
+  UpdateTask,
+} from './types'
 
 export type BoardState = {
   boards: Board[]
@@ -85,6 +91,12 @@ export const boardSlice = createSlice({
         title,
       }
     },
+    deleteTask: (state, action: PayloadAction<DeleteTask>) => {
+      const { columnId, id } = action.payload
+      const currBordIndex = findItemIndexById(state.boards, columnId)
+      const currBoard = state.boards[currBordIndex]
+      currBoard!.tasks = currBoard!.tasks.filter((t) => t.id !== id)
+    },
   },
 })
 export const selectBoards = (state: RootState) => state.board
@@ -94,5 +106,6 @@ export const {
   setDraggedItem,
   moveTask,
   updateTask,
+  deleteTask,
 } = boardSlice.actions
 export default boardSlice.reducer

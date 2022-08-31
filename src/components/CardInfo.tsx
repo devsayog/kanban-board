@@ -181,7 +181,7 @@ const CardInfo = ({ task, columnId, close }: CardInfoProps) => {
           <Paragraph text={date} />
         </div>
         <div className="mt-2 flex">
-          <Button text="Submit" click={update} />
+          <Button text="Submit &rarr;" icon={false} click={update} />
           <button
             onClick={close}
             type="button"
