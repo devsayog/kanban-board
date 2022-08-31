@@ -13,7 +13,7 @@ export const board = [
         date: new Date().toLocaleDateString(),
         stacks: [
           { id: nanoid(), text: 'figma' },
-          { id: nanoid(), text: 'PS' },
+          { id: nanoid(), text: 'AI' },
           { id: nanoid(), text: 'XD' },
         ],
       },
