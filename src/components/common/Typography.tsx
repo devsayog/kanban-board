@@ -1,18 +1,23 @@
 type TypographyProps = {
-  text: String
+  text: string
 }
 interface ParagraphProps extends TypographyProps {
   size?: 'sm' | 'base'
   className?: string
 }
 export const Heading2 = ({ text }: TypographyProps) => (
-  <h3 className="text-lg font-bold uppercase sm:text-xl md:text-2xl xl:text-3xl">
+  <h2
+    className="w-[250px] overflow-hidden text-ellipsis whitespace-nowrap text-lg font-light uppercase sm:text-xl md:text-2xl xl:text-3xl "
+    title={text}
+  >
     {text}
-  </h3>
+  </h2>
 )
 
 export const Heading3 = ({ text }: TypographyProps) => (
-  <h3 className="capitalize sm:text-lg md:text-xl xl:text-2xl">{text}</h3>
+  <h3 className="font-light capitalize sm:text-lg md:text-xl xl:text-2xl">
+    {text}
+  </h3>
 )
 
 export const Paragraph = ({

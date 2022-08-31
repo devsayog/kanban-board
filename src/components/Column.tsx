@@ -108,6 +108,8 @@ const Column = ({ title, tasks, index, id }: ColumnProps) => {
     <>
       <article className="flex max-h-[500px] min-w-fit  flex-col space-y-3 self-start overflow-y-hidden rounded bg-white p-2 shadow dark:bg-slate-2">
         <div className="group flex items-center justify-between">
+          {/* <div className="w-[250px] overflow-hidden text-ellipsis whitespace-nowrap ">
+          </div> */}
           <Heading2 text={title} />
           <div className="space-x-1">
             {index !== 0 && (
