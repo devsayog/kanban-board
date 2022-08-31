@@ -43,33 +43,36 @@ const Card = ({ isPreview, columnId, task }: CardProps) => {
     description,
   })
 
-  const [, drop] = useDrop({
-    accept: 'CARD',
-    hover: throttle(() => {
-      if (!ref.current) {
+  const [, drop] = useDrop(
+    () => ({
+      accept: 'CARD',
+      hover: throttle(() => {
+        if (!ref.current) {
+          return null
+        }
+        if (!draggedItem) {
+          return null
+        }
+        if (draggedItem.type !== 'CARD') {
+          return null
+        }
+        if (draggedItem.id === id) {
+          return null
+        }
+        dispatch(
+          moveTask({
+            draggedItemId: draggedItem.id,
+            hoveredItemId: id,
+            currentColId: draggedItem.columnId,
+            targetColId: columnId,
+          }),
+        )
+        dispatch(setDraggedItem({ ...draggedItem, columnId }))
         return null
-      }
-      if (!draggedItem) {
-        return null
-      }
-      if (draggedItem.type !== 'CARD') {
-        return null
-      }
-      if (draggedItem.id === id) {
-        return null
-      }
-      dispatch(
-        moveTask({
-          draggedItemId: draggedItem.id,
-          hoveredItemId: id,
-          currentColId: draggedItem.columnId,
-          targetColId: columnId,
-        }),
-      )
-      dispatch(setDraggedItem({ ...draggedItem, columnId }))
-      return null
-    }, 100),
-  })
+      }, 0),
+    }),
+    [draggedItem],
+  )
   drag(drop(ref))
   const hidden = () => {
     return Boolean(
