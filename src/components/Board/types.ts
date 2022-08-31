@@ -14,3 +14,7 @@ export type MoveTask = {
   currentColId: string
   targetColId: string
 }
+
+export interface UpdateTask extends Task {
+  columnId: string
+}

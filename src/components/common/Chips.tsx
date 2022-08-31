@@ -7,7 +7,7 @@ type Chipsprops = {
 }
 const Chips = ({ text, btn, close }: Chipsprops) => {
   return (
-    <div className="mr-2 mb-1 flex items-center rounded-2xl bg-gray-light-1 py-1 px-2 font-light dark:bg-slate-1">
+    <div className="mr-2 mb-1 flex items-center rounded-2xl bg-gray-light-3 py-1 px-2 tracking-wide dark:bg-slate-1">
       <Paragraph
         className="text-black dark:text-gray-light-1"
         text={text}

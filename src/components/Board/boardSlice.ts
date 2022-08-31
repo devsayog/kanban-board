@@ -8,7 +8,7 @@ import type { RootState } from '@/store/strore'
 import type { Board, Task } from '@/types/types'
 import { findItemIndexById } from '@/utils/array'
 
-import type { CardDragItem, CreateNewTask, MoveTask } from './types'
+import type { CardDragItem, CreateNewTask, MoveTask, UpdateTask } from './types'
 
 export type BoardState = {
   boards: Board[]
@@ -71,9 +71,28 @@ export const boardSlice = createSlice({
       // Add the task to the target list
       state.boards[targetBoardIndex]!.tasks.splice(hoverIndex, 0, item)
     },
+    updateTask: (state, action: PayloadAction<UpdateTask>) => {
+      const { columnId, date, description, id, stacks, title } = action.payload
+      const currIndex = findItemIndexById(state.boards, columnId)
+      const currBoard = state.boards[currIndex]
+      const curTaskIndex = findItemIndexById(currBoard!.tasks, id)
+
+      currBoard!.tasks[curTaskIndex] = {
+        id,
+        date,
+        description,
+        stacks,
+        title,
+      }
+    },
   },
 })
 export const selectBoards = (state: RootState) => state.board
-export const { createNewTask, createNewBoard, setDraggedItem, moveTask } =
-  boardSlice.actions
+export const {
+  createNewTask,
+  createNewBoard,
+  setDraggedItem,
+  moveTask,
+  updateTask,
+} = boardSlice.actions
 export default boardSlice.reducer
