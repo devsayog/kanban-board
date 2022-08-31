@@ -26,3 +26,6 @@ export type UpdateBoardTitle = {
   id: string
   text: string
 }
+export type DeleteBoard = {
+  id: string
+}

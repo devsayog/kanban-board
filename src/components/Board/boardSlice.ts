@@ -11,6 +11,7 @@ import { findItemIndexById } from '@/utils/array'
 import type {
   CardDragItem,
   CreateNewTask,
+  DeleteBoard,
   DeleteTask,
   MoveTask,
   UpdateBoardTitle,
@@ -103,6 +104,11 @@ export const boardSlice = createSlice({
       const currBoardIndex = findItemIndexById(state.boards, id)
       state.boards[currBoardIndex]!.title = text
     },
+    deleteBoard: (state, action: PayloadAction<DeleteBoard>) => {
+      const { id } = action.payload
+      const boardIndex = findItemIndexById(state.boards, id)
+      state.boards = state.boards.filter((_, i) => i !== boardIndex)
+    },
   },
 })
 export const selectBoards = (state: RootState) => state.board
@@ -114,5 +120,6 @@ export const {
   updateTask,
   deleteTask,
   updateBoardTitle,
+  deleteBoard,
 } = boardSlice.actions
 export default boardSlice.reducer
